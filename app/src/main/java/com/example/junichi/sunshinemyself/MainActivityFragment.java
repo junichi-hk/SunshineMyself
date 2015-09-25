@@ -111,7 +111,7 @@ public class MainActivityFragment extends Fragment {
                 }
             }
         }
-
+        // test
 //        return rootView;
 //        return inflater.inflate(R.layout.fragment_main, container, false);
         return(rootView);
