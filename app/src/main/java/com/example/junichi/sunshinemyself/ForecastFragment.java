@@ -1,7 +1,10 @@
 package com.example.junichi.sunshinemyself;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.format.Time;
@@ -98,7 +101,10 @@ public class ForecastFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String forecast = mForecastAdapter.getItem(position);
-                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_INTENT, forecast);
+                startActivity(intent);
             }
         });
 
@@ -126,6 +132,17 @@ public class ForecastFragment extends Fragment {
             String units = "metric";
             int numDays = 7;
 
+            // Get API Key from setting file. (We need a API Key since 9-Oct-2015) â†“â†“â†“â†“â†“
+            SharedPreferences pref = getActivity().getSharedPreferences("setting_data", getActivity().MODE_PRIVATE);
+
+            // Writing API Key
+//            SharedPreferences.Editor editor = pref.edit();
+//            editor.putString("appid", "Write API Key here!!");
+//            editor.commit();
+
+            String strAppId = pref.getString("appid", "no data");
+            // Get API Key from setting file. (We need a API Key since 9-Oct-2015) â†‘â†‘â†‘â†‘â†‘
+
             try {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
@@ -136,12 +153,14 @@ public class ForecastFragment extends Fragment {
                 final String FORMAT_PARAM = "mode";
                 final String UNITS_PARAM = "units";
                 final String DAYS_PARAM = "cnt";
+                final String APPID_PARAM = "appid";
 
                 Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                         .appendQueryParameter(QUERY_PARAM, params[0])
                         .appendQueryParameter(FORMAT_PARAM, format)
                         .appendQueryParameter(UNITS_PARAM, units)
                         .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
+                        .appendQueryParameter(APPID_PARAM, strAppId)
                         .build();
 
                 URL url = new URL(builtUri.toString());
@@ -213,7 +232,7 @@ public class ForecastFragment extends Fragment {
         private String getReadableDateString(long time) {
             // Because the API returns a unix timestamp (measured in seconds),
             // it must be converted to milliseconds in order to be converted to valid date.
-            // —j“ú‚Ì•\¦Œ`®•ÏX(ƒ[ƒJƒ‰ƒCƒY‚³‚êA—j“ú‚Ì‚İŠ¿š‚É‚È‚Á‚Ä‚µ‚Ü‚¤‚½‚ß)
+            // ï¿½jï¿½ï¿½Ì•\ï¿½ï¿½ï¿½`ï¿½ï¿½ï¿½ÏX(ï¿½ï¿½ï¿½[ï¿½Jï¿½ï¿½ï¿½Cï¿½Yï¿½ï¿½ï¿½ï¿½Aï¿½jï¿½ï¿½Ì‚İŠï¿½ï¿½ï¿½ï¿½É‚È‚ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½ï¿½)
 //            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
             SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd", Locale.US);
             return shortenedDateFormat.format(time);
