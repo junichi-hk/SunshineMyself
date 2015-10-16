@@ -65,8 +65,10 @@ public class ForecastFragment extends Fragment {
 
         if (id == R.id.action_refresh) {
             FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
-//            fetchWeatherTask.execute("94043");
-            fetchWeatherTask.execute("JP");
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String location = prefs.getString(getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default));
+            fetchWeatherTask.execute(location);
             return (true);
         }
         return super.onOptionsItemSelected(item);
